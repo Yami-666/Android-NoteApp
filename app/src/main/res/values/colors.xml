@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="colorPrimary">#292929</color>
+    <color name="colorPrimaryDark">#1c1c1c</color>
+    <color name="colorPrimaryLight">#515151</color>
+    <color name="colorSecondary">#fdbe3b</color>
+    <color name="colorSecondaryDark">#c68e00</color>
+    <color name="colorSecondaryLight">#fff06e</color>
+
+    <color name="colorAccent">#FDBE3B</color>
+    <color name="colorSearchIcon">#DBDBDB</color>
+    <color name="colorTextHint">#7B7B7B</color>
+    <color name="colorQuickActionBackground">#2F2D2E</color>
+    <color name="colorIcons">#A4A4A4</color>
+    <color name="colorTextSubtitle">#CECECE</color>
+    <color name="colorDefaultNote">#333333</color>
+    <color name="colorNoteSubtitle">#FAFAFA</color>
+    <color name="colorSheetDialog">#1F1F1F</color>
+    <color name="colorDelete">#FF4842</color>
+    <color name="colorSearchBackground">#333333</color>
+
+    <!-- Note background color -->
+    <color name="colorNoteYellow">#FDBE3B</color>
+    <color name="colorNoteRed">#FF4842</color>
+    <color name="colorNoteBlue">#3A52FC</color>
+    <color name="colorNoteBlack">#111111</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
