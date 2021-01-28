@@ -1,8 +1,11 @@
 package com.example.noteapp.adapters
 
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapp.R
@@ -21,10 +24,20 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val currentNote = noteList[position]
+
         with(holder) {
             itemView.findViewById<TextView>(R.id.textTitle).text = currentNote.title
             itemView.findViewById<TextView>(R.id.textSubtitle).text = currentNote.subtitle
             itemView.findViewById<TextView>(R.id.textDateTime).text = currentNote.dateTime
+
+
+            val layoutNote = itemView.findViewById<LinearLayout>(R.id.layoutItemNote)
+            val gradientDrawable = layoutNote.background as GradientDrawable
+            if (currentNote.color != null) {
+                gradientDrawable.setColor(Color.parseColor(currentNote.color))
+            } else {
+                gradientDrawable.setColor(Color.parseColor("#333333"))
+            }
         }
     }
 

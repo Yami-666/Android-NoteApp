@@ -20,8 +20,9 @@
     <color name="colorSearchBackground">#333333</color>
 
     <!-- Note background color -->
-    <color name="colorNoteYellow">#FDBE3B</color>
-    <color name="colorNoteRed">#FF4842</color>
+    <color name="colorNoteGreen">#007100</color>
+    <color name="colorNoteYellow">#FFBB2F</color>
+    <color name="colorNoteRed">#c40019</color>
     <color name="colorNoteBlue">#3A52FC</color>
     <color name="colorNoteBlack">#111111</color>
 
