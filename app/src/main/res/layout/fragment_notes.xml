@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".ui.NotesFragment">
+    tools:context=".ui.NoteFragment">
 
     <TextView
         android:id="@+id/textViewAppName"
@@ -127,6 +127,7 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="@dimen/_5sdp"
+        android:elevation="@dimen/_10sdp"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toTopOf="@+id/layoutQuickActions"
         app:layout_constraintEnd_toEndOf="parent"

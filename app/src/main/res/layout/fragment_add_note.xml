@@ -78,7 +78,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/inputNoteTitle" />
 
             <EditText
-                android:id="@+id/inputNoteTSubtitle"
+                android:id="@+id/inputNoteSubtitle"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_35sdp"
                 android:layout_marginTop="@dimen/_15sdp"
@@ -102,9 +102,9 @@
                 android:layout_width="@dimen/_5sdp"
                 android:layout_height="0dp"
                 android:background="@drawable/subtitle_indicator"
-                app:layout_constraintBottom_toBottomOf="@+id/inputNoteTSubtitle"
+                app:layout_constraintBottom_toBottomOf="@+id/inputNoteSubtitle"
                 app:layout_constraintStart_toStartOf="@+id/inputNoteTitle"
-                app:layout_constraintTop_toTopOf="@+id/inputNoteTSubtitle" />
+                app:layout_constraintTop_toTopOf="@+id/inputNoteSubtitle" />
 
             <EditText
                 android:id="@+id/inputNoteText"
@@ -123,9 +123,9 @@
                 android:textColorHint="@color/colorTextHint"
                 android:minHeight="@dimen/_100sdp"
                 android:textSize="@dimen/_13ssp"
-                app:layout_constraintEnd_toEndOf="@+id/inputNoteTSubtitle"
+                app:layout_constraintEnd_toEndOf="@+id/inputNoteSubtitle"
                 app:layout_constraintStart_toStartOf="@+id/indicator"
-                app:layout_constraintTop_toBottomOf="@+id/inputNoteTSubtitle" />
+                app:layout_constraintTop_toBottomOf="@+id/inputNoteSubtitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
