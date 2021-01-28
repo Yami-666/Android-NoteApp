@@ -81,7 +81,9 @@
         <ImageView
             android:layout_width="@dimen/_23sdp"
             android:layout_height="@dimen/_23sdp"
+            android:clickable="true"
             android:contentDescription="@string/app_name"
+            android:focusable="true"
             android:src="@drawable/ic_float_add"
             app:tint="@color/colorIcons" />
 
@@ -89,7 +91,9 @@
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_25sdp"
             android:layout_marginStart="@dimen/_14sdp"
+            android:clickable="true"
             android:contentDescription="@string/app_name"
+            android:focusable="true"
             android:src="@drawable/ic_add_photo"
             app:tint="@color/colorIcons" />
 
@@ -97,7 +101,9 @@
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_25sdp"
             android:layout_marginStart="@dimen/_14sdp"
+            android:clickable="true"
             android:contentDescription="@string/app_name"
+            android:focusable="true"
             android:src="@drawable/ic_micro"
             app:tint="@color/colorIcons" />
 
@@ -105,22 +111,36 @@
             android:layout_width="@dimen/_23sdp"
             android:layout_height="@dimen/_23sdp"
             android:layout_marginStart="@dimen/_14sdp"
+            android:clickable="true"
             android:contentDescription="@string/app_name"
+            android:focusable="true"
             android:src="@drawable/ic_edit"
             app:tint="@color/colorIcons" />
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/floatingButtonAddNote"
+        android:id="@+id/addNoteButton"
         android:layout_width="@dimen/_44sdp"
         android:layout_height="@dimen/_44sdp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/background_floating_button"
+        android:clickable="true"
+        android:focusable="true"
         android:padding="@dimen/_5sdp"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toTopOf="@+id/layoutQuickActions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/layoutQuickActions"
-        app:tint="@color/black" />
+        app:tint="@color/black"
+        android:contentDescription="@string/app_name" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notesRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutQuickActions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutSearch"
+        android:clipToPadding="false"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

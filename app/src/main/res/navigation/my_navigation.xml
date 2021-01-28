@@ -18,5 +18,11 @@
         android:id="@+id/addNoteFragment"
         android:name="com.example.noteapp.ui.add.AddNoteFragment"
         android:label="fragment_add_note"
-        tools:layout="@layout/fragment_add_note" />
+        tools:layout="@layout/fragment_add_note" >
+        <action
+            android:id="@+id/action_addNoteFragment_to_notesFragment"
+            app:destination="@id/notesFragment"
+            app:popUpTo="@id/addNoteFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 </navigation>
