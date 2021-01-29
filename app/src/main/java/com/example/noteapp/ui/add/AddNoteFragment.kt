@@ -1,6 +1,7 @@
 package com.example.noteapp.ui.add
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.noteapp.R
 import com.example.noteapp.databinding.FragmentAddNoteBinding
+import com.example.noteapp.databinding.LayoutSheetMoreBinding
 import com.example.noteapp.model.Note
 import com.example.noteapp.viewModel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -33,7 +35,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddNoteFragment : Fragment(), View.OnClickListener {
+class AddNoteFragment : Fragment() {
 
     private lateinit var mNoteViewModel: NoteViewModel
 
@@ -47,8 +49,9 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
         private const val REQUEST_CODE_SELECT_IMAGE = 2
     }
 
-    // Цвет заментки указан по-умолчанию
+    // Цвет заметки (указан по-умолчанию)
     private var selectedNoteColor: String = "#333333"
+    // Выбранная пользователем изображение
     private var selectedImagePath: String = ""
 
     override fun onCreateView(
@@ -61,9 +64,7 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
         binding.imageArrowBack.setOnClickListener {
             findNavController().navigate(R.id.action_addNoteFragment_to_notesFragment)
         }
-
         mNoteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-
         // Указание цвета индикатора у подзагаловка
         subtitleIndicator = binding.indicator
 
@@ -71,14 +72,12 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
         binding.textDateTime.text =
                 SimpleDateFormat("EEEE, dd, MMMM yyyy HH:mm a", Locale.getDefault())
                         .format(Date())
-
         binding.imageCreateNote.setOnClickListener {
             createNote()
         }
 
         initMoreDialog(view)
         setIndicatorColor()
-
         return view
     }
 
@@ -88,7 +87,6 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
         if (!inputValid()) {
             return
         }
-
         val note = Note(
                 id = 0,
                 title = binding.inputNoteTitle.text.toString().trim(),
@@ -101,7 +99,6 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
                 video = null,
                 audio = null
         )
-
         mNoteViewModel.addNote(note)
         Toast.makeText(requireContext(), "Note is successfully created!", Toast.LENGTH_SHORT)
                 .show()
@@ -128,78 +125,57 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
 
     // Инициализация нижний панели
     private fun initMoreDialog(view: View) {
-        val layoutMoreDialog = view.findViewById<LinearLayout>(R.id.layoutSheetMore)
-        layoutMoreDialog.findViewById<TextView>(R.id.textSheetDialog).setOnClickListener(this)
-        layoutMoreDialog.findViewById<ImageView>(R.id.imageColorDefault).setOnClickListener(this)
-        layoutMoreDialog.findViewById<ImageView>(R.id.imageColorGreen).setOnClickListener(this)
-        layoutMoreDialog.findViewById<ImageView>(R.id.imageColorBlue).setOnClickListener(this)
-        layoutMoreDialog.findViewById<ImageView>(R.id.imageColorRed).setOnClickListener(this)
-        layoutMoreDialog.findViewById<ImageView>(R.id.imageColorYellow).setOnClickListener(this)
-        layoutMoreDialog.findViewById<LinearLayout>(R.id.layoutAddImage).setOnClickListener(this)
-    }
+        val dialogBinding = LayoutSheetMoreBinding.bind(view)
+        val bottomSheetBehavior = BottomSheetBehavior.from(dialogBinding.layoutSheetMore)
 
-    // Bottom sheen dialog
-    override fun onClick(v: View?) {
-        val layoutMoreDialog = view?.findViewById<LinearLayout>(R.id.layoutSheetMore)
-        val bottomSheetBehavior = BottomSheetBehavior.from(layoutMoreDialog!!)
-        when (v?.id) {
-            R.id.imageColorDefault -> {
-                selectedNoteColor = "#333333"
-                resetImageResource()
-                imageColorDefault.setImageResource(R.drawable.ic_check)
-                setIndicatorColor()
-            }
-            R.id.imageColorGreen -> {
-                selectedNoteColor = "#007100"
-                resetImageResource()
-                imageColorGreen.setImageResource(R.drawable.ic_check)
-                setIndicatorColor()
-            }
-            R.id.imageColorBlue -> {
-                selectedNoteColor = "#3A52FC"
-                resetImageResource()
-                imageColorBlue.setImageResource(R.drawable.ic_check)
-                setIndicatorColor()
-            }
-            R.id.imageColorRed -> {
-                selectedNoteColor = "#c40019"
-                resetImageResource()
-                imageColorRed.setImageResource(R.drawable.ic_check)
-                setIndicatorColor()
-            }
-            R.id.imageColorYellow -> {
-                selectedNoteColor = "#FFBB2F"
-                resetImageResource()
-                imageColorYellow.setImageResource(R.drawable.ic_check)
-                setIndicatorColor()
-            }
-            R.id.layoutAddImage -> {
+        dialogBinding.textSheetDialog.setOnClickListener {
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            } else {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission
-                                .READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(
-                            requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_STORAGE_PERMISSION
-                    )
-                } else {
-                    selectImage()
-                }
-            }
-            R.id.textSheetDialog -> {
-                if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                } else {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                }
-
             }
         }
-    }
-
-    // Метод выбора изображения пользователем
-    private fun selectImage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        if (activity?.packageManager?.let { intent.resolveActivity(it) } != null) {
-            startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGE)
+        dialogBinding.imageColorDefault.setOnClickListener {
+            selectedNoteColor = "#333333"
+            resetImageResource()
+            imageColorDefault.setImageResource(R.drawable.ic_check)
+            setIndicatorColor()
+        }
+        dialogBinding.imageColorGreen.setOnClickListener {
+            selectedNoteColor = "#007100"
+            resetImageResource()
+            imageColorBlue.setImageResource(R.drawable.ic_check)
+            setIndicatorColor()
+        }
+        dialogBinding.imageColorBlue.setOnClickListener {
+            selectedNoteColor = "#3A52FC"
+            resetImageResource()
+            imageColorBlue.setImageResource(R.drawable.ic_check)
+            setIndicatorColor()
+        }
+        dialogBinding.imageColorRed.setOnClickListener {
+            selectedNoteColor = "#c40019"
+            resetImageResource()
+            imageColorRed.setImageResource(R.drawable.ic_check)
+            setIndicatorColor()
+        }
+        dialogBinding.imageColorYellow.setOnClickListener {
+            selectedNoteColor = "#FFBB2F"
+            resetImageResource()
+            imageColorYellow.setImageResource(R.drawable.ic_check)
+            setIndicatorColor()
+        }
+        dialogBinding.layoutAddImage.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission
+                            .READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf (Manifest.permission.READ_EXTERNAL_STORAGE),
+                        REQUEST_CODE_STORAGE_PERMISSION)
+            } else {
+                selectImage()
+            }
         }
     }
 
@@ -210,6 +186,15 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
         imageColorGreen.setImageResource(0)
         imageColorRed.setImageResource(0)
         imageColorYellow.setImageResource(0)
+    }
+
+    // Метод выбора изображения пользователем
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        if (activity?.packageManager?.let { intent.resolveActivity(it) } != null) {
+            startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGE)
+        }
     }
 
     private fun setIndicatorColor() {
@@ -228,6 +213,7 @@ class AddNoteFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

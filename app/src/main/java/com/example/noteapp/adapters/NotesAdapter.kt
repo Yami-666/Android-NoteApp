@@ -10,35 +10,36 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapp.R
+import com.example.noteapp.databinding.FragmentNotesBinding
+import com.example.noteapp.databinding.ItemRvNoteBinding
 import com.example.noteapp.model.Note
+import com.example.noteapp.ui.NoteFragmentDirections
+import kotlinx.android.synthetic.main.item_rv_note.view.*
 import kotlinx.coroutines.*
 
 class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
     private var noteList = emptyList<Note>()
 
-    @Volatile
-    private var bitmap: Bitmap? = null
-
-    class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class NoteViewHolder(val binding: ItemRvNoteBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        return NoteViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_rv_note, parent, false)
-        )
+        return NoteViewHolder(ItemRvNoteBinding.inflate(LayoutInflater.from(parent.context),
+                parent, false))
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val currentNote = noteList[position]
 
         with(holder) {
-            itemView.findViewById<TextView>(R.id.textTitle).text = currentNote.title
-            itemView.findViewById<TextView>(R.id.textSubtitle).text = currentNote.subtitle
-            itemView.findViewById<TextView>(R.id.textDateTime).text = currentNote.dateTime
+            binding.textTitle.text = currentNote.title
+            itemView.textSubtitle.text = currentNote.subtitle
+            itemView.textDateTime.text = currentNote.dateTime
         }
 
-        val layoutNote = holder.itemView.findViewById<LinearLayout>(R.id.layoutItemNote)
+        val layoutNote = holder.binding.layoutItemNote
         val gradientDrawable = layoutNote.background as GradientDrawable
         if (currentNote.color != null) {
             gradientDrawable.setColor(Color.parseColor(currentNote.color))
@@ -47,8 +48,7 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
         }
 
         if (currentNote.imagePath != null) {
-            val imageNote = holder.itemView.findViewById<ImageView>(R.id.imageNote)
-
+            val imageNote = holder.binding.imageNote
             // Загрузка изображений в списке в фоновом потоке
             // Чтобы при прокрутке не было провисания UI
             CoroutineScope(Dispatchers.IO).launch {
@@ -59,6 +59,11 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
                     imageNote.visibility = View.VISIBLE
                 }
             }
+        }
+
+        layoutNote.setOnClickListener {
+            val action = NoteFragmentDirections.actionNotesFragmentToUpdateNoteFragment(currentNote)
+            holder.itemView.findNavController().navigate(action)
         }
     }
 

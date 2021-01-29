@@ -1,9 +1,12 @@
 package com.example.noteapp.model
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize as Parcelize
 
+@Parcelize
 @Entity(tableName = "notes")
 data class Note(
         @PrimaryKey(autoGenerate = true)
@@ -29,4 +32,4 @@ data class Note(
         val video: String?,
 
         val audio: String?,
-)
+): Parcelable
