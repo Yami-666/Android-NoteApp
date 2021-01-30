@@ -13,9 +13,6 @@
         <action
             android:id="@+id/action_notesFragment_to_addNoteFragment"
             app:destination="@id/addNoteFragment" />
-        <action
-            android:id="@+id/action_notesFragment_to_updateNoteFragment"
-            app:destination="@id/updateNoteFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNoteFragment"
@@ -27,17 +24,10 @@
             app:destination="@id/notesFragment"
             app:popUpTo="@id/addNoteFragment"
             app:popUpToInclusive="false" />
-    </fragment>
-    <fragment
-        android:id="@+id/updateNoteFragment"
-        android:name="com.example.noteapp.UpdateNoteFragment"
-        android:label="fragment_update_note"
-        tools:layout="@layout/fragment_update_note" >
-        <action
-            android:id="@+id/action_updateNoteFragment_to_notesFragment"
-            app:destination="@id/notesFragment" />
         <argument
             android:name="noteArgs"
-            app:argType="com.example.noteapp.model.Note" />
+            app:argType="com.example.noteapp.model.Note"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

@@ -34,7 +34,7 @@ class NoteFragment : Fragment() {
         }
 
         val recycleView = binding.notesRecycleView
-        val adapter = NotesAdapter()
+        val adapter = NotesAdapter(context)
         recycleView.adapter = adapter
         recycleView.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)

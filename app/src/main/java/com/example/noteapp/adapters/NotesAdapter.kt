@@ -1,5 +1,6 @@
 package com.example.noteapp.adapters
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapp.R
@@ -20,7 +22,7 @@ import com.example.noteapp.ui.NoteFragmentDirections
 import kotlinx.android.synthetic.main.item_rv_note.view.*
 import kotlinx.coroutines.*
 
-class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
+class NotesAdapter(private val context: Context?) : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
     private var noteList = emptyList<Note>()
 
     class NoteViewHolder(val binding: ItemRvNoteBinding) : RecyclerView.ViewHolder(binding.root)
@@ -61,9 +63,16 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
             }
         }
 
+        // Update Note
         layoutNote.setOnClickListener {
-            val action = NoteFragmentDirections.actionNotesFragmentToUpdateNoteFragment(currentNote)
+            val action = NoteFragmentDirections.actionNotesFragmentToAddNoteFragment(currentNote)
             holder.itemView.findNavController().navigate(action)
+        }
+
+        // Delete Note
+        layoutNote.setOnLongClickListener {
+            Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
+            return@setOnLongClickListener true
         }
     }
 
