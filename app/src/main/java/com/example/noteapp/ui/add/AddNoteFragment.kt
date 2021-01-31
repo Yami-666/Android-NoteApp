@@ -3,14 +3,17 @@ package com.example.noteapp.ui.add
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +26,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.noteapp.R
 import com.example.noteapp.databinding.FragmentAddNoteBinding
+import com.example.noteapp.databinding.LayoutDeleteDialogBinding
 import com.example.noteapp.model.Note
 import com.example.noteapp.viewModel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -41,6 +45,8 @@ class AddNoteFragment : Fragment() {
 
     private var _binding: FragmentAddNoteBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var mDeleteDialog: AlertDialog
 
     companion object {
         private const val REQUEST_CODE_STORAGE_PERMISSION = 1
@@ -88,13 +94,9 @@ class AddNoteFragment : Fragment() {
             if (args.noteArgs != null) {
                 val note = createNote()
                 mNoteViewModel.updateNote(note)
-                Toast.makeText(requireContext(), "Note is successfully update!", Toast.LENGTH_SHORT)
-                        .show()
             } else {
                 val note = createNote()
                 mNoteViewModel.addNote(note)
-                Toast.makeText(requireContext(), "Note is successfully created!", Toast.LENGTH_SHORT)
-                        .show()
             }
             findNavController().navigate(R.id.action_addNoteFragment_to_notesFragment)
 
@@ -222,7 +224,40 @@ class AddNoteFragment : Fragment() {
                 selectImage()
             }
         }
+
+        // Delete note
+        if (args.noteArgs != null) {
+            layoutDialog.layoutDeleteNote.visibility = View.VISIBLE
+            layoutDialog.layoutDeleteNote.setOnClickListener {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                initDeleteNoteDialog()
+            }
+        }
     }
+
+    private fun initDeleteNoteDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val view = LayoutInflater.from(requireContext()).inflate(
+                R.layout.layout_delete_dialog,
+                binding.root.findViewById(R.id.layoutDeleteNoteContainer)
+        )
+        builder.setView(view)
+        mDeleteDialog = builder.create()
+        if (mDeleteDialog.window != null) {
+            mDeleteDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        val dialogBinding = LayoutDeleteDialogBinding.bind(view)
+        dialogBinding.textDeleteNote.setOnClickListener {
+            mNoteViewModel.deleteNote(createNote())
+            mDeleteDialog.cancel()
+            findNavController().navigate(R.id.action_addNoteFragment_to_notesFragment)
+        }
+        dialogBinding.textCancelDialog.setOnClickListener {
+            mDeleteDialog.cancel()
+        }
+        mDeleteDialog.show()
+    }
+
 
     // Сбрасывает все отметки у значков выбора цвета
     private fun resetImageResource() {

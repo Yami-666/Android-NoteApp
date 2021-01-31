@@ -153,4 +153,65 @@
             />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutAddWebLink"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="@dimen/_23sdp"
+            android:layout_height="@dimen/_23sdp"
+            android:src="@drawable/ic_web"
+            app:tint="@color/colorIcons" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_medium"
+            android:includeFontPadding="false"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:text="Add Web-link"
+            android:textColor="@color/colorIcons"
+            android:textSize="@dimen/_12ssp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutDeleteNote"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:visibility="gone"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="@dimen/_23sdp"
+            android:layout_height="@dimen/_23sdp"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/colorDelete" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_medium"
+            android:includeFontPadding="false"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/delete_note"
+            android:textColor="@color/colorDelete"
+            android:textSize="@dimen/_12ssp"
+            />
+
+    </LinearLayout>
 </LinearLayout>
