@@ -13,10 +13,14 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.text.Layout
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,6 +34,8 @@ import com.example.noteapp.databinding.LayoutDeleteDialogBinding
 import com.example.noteapp.model.Note
 import com.example.noteapp.viewModel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.fragment_add_note.*
+import kotlinx.android.synthetic.main.fragment_add_note.view.*
 import kotlinx.android.synthetic.main.layout_sheet_more.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +53,7 @@ class AddNoteFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var mDeleteDialog: AlertDialog
+    private lateinit var mUrlDialog: AlertDialog
 
     companion object {
         private const val REQUEST_CODE_STORAGE_PERMISSION = 1
@@ -89,7 +96,7 @@ class AddNoteFragment : Fragment() {
             findColor(selectedNoteColor)
         }
 
-        // Создание/Обновление note
+        // Add/Update Note
         binding.imageCreateNote.setOnClickListener {
             if (args.noteArgs != null) {
                 val note = createNote()
@@ -102,9 +109,15 @@ class AddNoteFragment : Fragment() {
 
         }
 
+        // Delete url
+        binding.imageDeleteUrl.setOnClickListener {
+            binding.layoutWebURL.visibility = View.GONE
+        }
+
         return view
     }
 
+    // TODO: 02.02.2021 Вынести в enum class Color 
     private fun findColor(color: String) {
         when (color) {
             "#333333" -> binding.root.layoutSheetMore.imageColorDefault.performClick()
@@ -125,7 +138,8 @@ class AddNoteFragment : Fragment() {
                 text = this.binding.inputNoteText.text.toString().trim(),
                 color = this.selectedNoteColor,
                 imagePath = this.selectedImagePath,
-                webLink = null,
+                webLink = if (binding.layoutWebURL.visibility == View.VISIBLE) binding.textURL
+                        .text.toString() else "",
                 video = null,
                 audio = null
         )
@@ -135,9 +149,11 @@ class AddNoteFragment : Fragment() {
         binding.inputNoteTitle.setText(args.noteArgs?.title)
         binding.inputNoteSubtitle.setText(args.noteArgs?.subtitle)
         binding.inputNoteText.setText(args.noteArgs?.text)
+        // if the color is...
         if (args.noteArgs?.color != null) {
             selectedNoteColor = args.noteArgs?.color!!
         }
+        // If the picture is...
         if (args.noteArgs?.imagePath != "" && args.noteArgs?.imagePath != null) {
             selectedImagePath = args.noteArgs?.imagePath!!
             CoroutineScope(Dispatchers.IO).launch {
@@ -150,25 +166,12 @@ class AddNoteFragment : Fragment() {
                 }
             }
         }
+        // If the web link is...
+        if (args.noteArgs?.webLink != null && args.noteArgs?.webLink != "") {
+            binding.textURL.text = args.noteArgs?.webLink!!
+            binding.root.layoutWebURL.visibility = View.VISIBLE
+        }
     }
-
-//    // Проверка введённых данных
-//    private fun inputValid(): Boolean {
-//        if (binding.inputNoteTitle.text.toString().trim().isEmpty()) {
-//            Toast.makeText(requireContext(), "Empty field", Toast.LENGTH_SHORT).show()
-//            return false
-//        }
-//        if (binding.inputNoteSubtitle.text.toString().trim().isEmpty()) {
-//            Toast.makeText(requireContext(), "Empty field", Toast.LENGTH_SHORT).show()
-//            return false
-//        }
-//        if (binding.inputNoteText.text.toString().trim().isEmpty()) {
-//            Toast.makeText(requireContext(), "Empty field", Toast.LENGTH_SHORT).show()
-//            return false
-//        }
-//        return true
-//    }
-
 
     // Инициализация нижний панели
     private fun initMoreDialog() {
@@ -224,6 +227,10 @@ class AddNoteFragment : Fragment() {
                 selectImage()
             }
         }
+        layoutDialog.layoutAddWebLink.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            initUrlDialog()
+        }
 
         // Delete note
         if (args.noteArgs != null) {
@@ -258,6 +265,38 @@ class AddNoteFragment : Fragment() {
         mDeleteDialog.show()
     }
 
+    private fun initUrlDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val view = LayoutInflater.from(requireContext()).inflate(
+                R.layout.layout_url_dialog,
+                binding.root.findViewById(R.id.layoutUrlNoteContainer)
+        )
+
+        builder.setView(view)
+        mUrlDialog = builder.create()
+        if (mUrlDialog.window != null) {
+            mUrlDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+
+        val inputUrl = view.findViewById<EditText>(R.id.inputUrl)
+        inputUrl.requestFocus()
+
+        view.findViewById<TextView>(R.id.textAddNote).setOnClickListener {
+            if (inputUrl.text.toString().isEmpty()) {
+                Toast.makeText(requireContext(), "Enter URL", Toast.LENGTH_SHORT).show()
+            } else if (!Patterns.WEB_URL.matcher(inputUrl.text.toString()).matches()) {
+                Toast.makeText(requireContext(), "Enter a valid URL", Toast.LENGTH_SHORT).show()
+            } else {
+                binding.textURL.text = inputUrl.text.toString()
+                binding.layoutWebURL.visibility = View.VISIBLE
+                mUrlDialog.dismiss()
+            }
+        }
+        view.findViewById<TextView>(R.id.textCancelDialog).setOnClickListener {
+            mUrlDialog.dismiss()
+        }
+        mUrlDialog.show()
+    }
 
     // Сбрасывает все отметки у значков выбора цвета
     private fun resetImageResource() {

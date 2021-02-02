@@ -10,4 +10,8 @@
     <string name="add_image">Add image</string>
     <string name="delete_note">Delete Note</string>
     <string name="are_you_sure_you_want_to_delete_this_note">Are you sure you want to delete this note?</string>
+    <string name="add_url">Add url</string>
+    <string name="enter_url">Enter URL</string>
+    <string name="add_URL">Add URL</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -117,14 +117,44 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/app_name"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/inputNoteSubtitle"
+                app:layout_constraintTop_toBottomOf="@+id/layoutWebURL"
                 app:layout_constraintBottom_toTopOf="@id/inputNoteText"
                 />
 
+            <LinearLayout
+                android:id="@+id/layoutWebURL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/inputNoteSubtitle">
+                <TextView
+                    android:id="@+id/textURL"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autoLink="web"
+                    android:fontFamily="@font/ubuntu_regular"
+                    android:textSize="@dimen/_13ssp"
+                    android:includeFontPadding="false"
+                    />
+                <ImageView
+                    android:id="@+id/imageDeleteUrl"
+                    android:layout_width="@dimen/_23sdp"
+                    android:layout_height="@dimen/_23sdp"
+                    android:src="@drawable/ic_delete"
+                    app:tint="@color/colorDelete"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+            
             <EditText
                 android:id="@+id/inputNoteText"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:background="@null"
                 android:fontFamily="@font/ubuntu_regular"
@@ -137,11 +167,11 @@
                 android:minHeight="@dimen/_100sdp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/colorTextHint"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_14ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/inputNoteSubtitle"
                 app:layout_constraintStart_toStartOf="@+id/indicator"
-                app:layout_constraintTop_toBottomOf="@+id/inputNoteSubtitle" />
+                app:layout_constraintTop_toBottomOf="@+id/layoutWebURL" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
