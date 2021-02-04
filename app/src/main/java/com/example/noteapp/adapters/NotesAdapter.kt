@@ -7,16 +7,21 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.noteapp.R
 import com.example.noteapp.databinding.ItemRvNoteBinding
 import com.example.noteapp.model.Note
 import com.example.noteapp.ui.NoteFragmentDirections
+import com.example.noteapp.ui.add.AddNoteFragment
+import com.example.noteapp.ui.enum.ColorNoteType
 import kotlinx.android.synthetic.main.item_rv_note.view.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -38,15 +43,12 @@ class NotesAdapter(private val context: Context?) : RecyclerView.Adapter<NotesAd
         val currentNote = noteList[position]
 
         if (currentNote.imagePath != null && currentNote.imagePath != "") {
-            // Загрузка изображений в списке в фоновом потоке
-            // Чтобы при прокрутке не было провисания UI
             val imagePath: Uri = Uri.fromFile(File(currentNote.imagePath))
-
             val requestOptions = RequestOptions().placeholder(R.drawable.background_note)
-
             if (context != null) {
                 Glide.with(context)
                         .load(imagePath)
+                        .transform(CenterCrop())
                         .apply(requestOptions)
                         .into(holder.binding.imageNote)
             }
@@ -57,7 +59,7 @@ class NotesAdapter(private val context: Context?) : RecyclerView.Adapter<NotesAd
         if (currentNote.color != null) {
             gradientDrawable.setColor(Color.parseColor(currentNote.color))
         } else {
-            gradientDrawable.setColor(Color.parseColor("#333333"))
+            gradientDrawable.setColor(Color.parseColor(ColorNoteType.DEFAULT.color))
         }
 
         with(holder) {
@@ -71,12 +73,7 @@ class NotesAdapter(private val context: Context?) : RecyclerView.Adapter<NotesAd
             val action = NoteFragmentDirections.actionNotesFragmentToAddNoteFragment(currentNote)
             holder.itemView.findNavController().navigate(action)
         }
-
-        // Delete Note
-        layoutNote.setOnLongClickListener {
-            Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
-            return@setOnLongClickListener true
-        }
+        holder.binding.imageNote.visibility = View.VISIBLE
     }
 
     override fun getItemCount(): Int = noteList.size

@@ -13,8 +13,6 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.Layout
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -32,9 +30,9 @@ import com.example.noteapp.R
 import com.example.noteapp.databinding.FragmentAddNoteBinding
 import com.example.noteapp.databinding.LayoutDeleteDialogBinding
 import com.example.noteapp.model.Note
+import com.example.noteapp.ui.enum.ColorNoteType
 import com.example.noteapp.viewModel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.fragment_add_note.*
 import kotlinx.android.synthetic.main.fragment_add_note.view.*
 import kotlinx.android.synthetic.main.layout_sheet_more.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -62,10 +60,10 @@ class AddNoteFragment : Fragment() {
 
     private lateinit var subtitleIndicator: View
 
-    // Цвет заметки (указан по-умолчанию)
-    private var selectedNoteColor: String = "#333333"
+    // Selected user color for indicator and Note
+    private var selectedNoteColor: String = ColorNoteType.DEFAULT.color
 
-    // Выбранная пользователем изображение
+    // Selected user image path
     private var selectedImagePath: String = ""
 
     override fun onCreateView(
@@ -79,16 +77,16 @@ class AddNoteFragment : Fragment() {
             findNavController().navigate(R.id.action_addNoteFragment_to_notesFragment)
         }
         mNoteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-        // Указание цвета индикатора у подзагаловка
+
+        // Subtitle indicator view for change color
         subtitleIndicator = binding.indicator
 
-        // Указываем формат даты и времени
+        // Data & time auto select
         binding.textDateTime.text =
                 SimpleDateFormat("EEEE, dd, MMMM yyyy HH:mm a", Locale.getDefault())
                         .format(Date())
-        // Инициализирует диалоговое окно
+
         initMoreDialog()
-        // Устанавливает цвет индикатора у subtitle
         setIndicatorColor()
 
         if (args.noteArgs != null) {
@@ -117,14 +115,14 @@ class AddNoteFragment : Fragment() {
         return view
     }
 
-    // TODO: 02.02.2021 Вынести в enum class Color 
+    // Find color if we want to update note
     private fun findColor(color: String) {
         when (color) {
-            "#333333" -> binding.root.layoutSheetMore.imageColorDefault.performClick()
-            "#007100" -> binding.root.layoutSheetMore.imageColorGreen.performClick()
-            "#3A52FC" -> binding.root.layoutSheetMore.imageColorBlue.performClick()
-            "#c40019" -> binding.root.layoutSheetMore.imageColorRed.performClick()
-            "#FFBB2F" -> binding.root.layoutSheetMore.imageColorYellow.performClick()
+            ColorNoteType.DEFAULT.color -> binding.root.layoutSheetMore.imageColorDefault.performClick()
+            ColorNoteType.GREEN.color -> binding.root.layoutSheetMore.imageColorGreen.performClick()
+            ColorNoteType.BLUE.color -> binding.root.layoutSheetMore.imageColorBlue.performClick()
+            ColorNoteType.RED.color -> binding.root.layoutSheetMore.imageColorRed.performClick()
+            ColorNoteType.YELLOW.color -> binding.root.layoutSheetMore.imageColorYellow.performClick()
             else -> binding.root.layoutSheetMore.imageColorDefault.performClick()
         }
     }
@@ -173,11 +171,12 @@ class AddNoteFragment : Fragment() {
         }
     }
 
-    // Инициализация нижний панели
+    // Init sheet dialog
     private fun initMoreDialog() {
         val layoutDialog = binding.root.layoutSheetMore
         val bottomSheetBehavior = BottomSheetBehavior.from(layoutDialog)
 
+        // Show sheet dialog after click
         layoutDialog.textSheetDialog.setOnClickListener {
             if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -185,36 +184,30 @@ class AddNoteFragment : Fragment() {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
+
+        // Change color note
         layoutDialog.imageColorDefault.setOnClickListener {
-            selectedNoteColor = "#333333"
-            resetImageResource()
+            changeNoteColor(ColorNoteType.DEFAULT.color)
             layoutDialog.imageColorDefault.setImageResource(R.drawable.ic_check)
-            setIndicatorColor()
         }
         layoutDialog.imageColorGreen.setOnClickListener {
-            selectedNoteColor = "#007100"
-            resetImageResource()
+            changeNoteColor(ColorNoteType.GREEN.color)
             layoutDialog.imageColorGreen.setImageResource(R.drawable.ic_check)
-            setIndicatorColor()
         }
         layoutDialog.imageColorBlue.setOnClickListener {
-            selectedNoteColor = "#3A52FC"
-            resetImageResource()
+            changeNoteColor(ColorNoteType.BLUE.color)
             layoutDialog.imageColorBlue.setImageResource(R.drawable.ic_check)
-            setIndicatorColor()
         }
         layoutDialog.imageColorRed.setOnClickListener {
-            selectedNoteColor = "#c40019"
-            resetImageResource()
+            changeNoteColor(ColorNoteType.RED.color)
             layoutDialog.imageColorRed.setImageResource(R.drawable.ic_check)
-            setIndicatorColor()
         }
         layoutDialog.imageColorYellow.setOnClickListener {
-            selectedNoteColor = "#FFBB2F"
-            resetImageResource()
+            changeNoteColor(ColorNoteType.YELLOW.color)
             layoutDialog.imageColorYellow.setImageResource(R.drawable.ic_check)
-            setIndicatorColor()
         }
+
+        // Add image
         layoutDialog.layoutAddImage.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission
@@ -227,6 +220,8 @@ class AddNoteFragment : Fragment() {
                 selectImage()
             }
         }
+
+        // Add web-url
         layoutDialog.layoutAddWebLink.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             initUrlDialog()
@@ -242,7 +237,23 @@ class AddNoteFragment : Fragment() {
         }
     }
 
-    private fun initDeleteNoteDialog() {
+    private fun changeNoteColor(color: String) {
+        selectedNoteColor = color
+
+        // Resetting all color icons to override one in the future
+        with(binding.root.layoutSheetMore) {
+            imageColorBlue.setImageResource(0)
+            imageColorDefault.setImageResource(0)
+            imageColorGreen.setImageResource(0)
+            imageColorRed.setImageResource(0)
+            imageColorYellow.setImageResource(0)
+        }
+
+        setIndicatorColor()
+    }
+
+    // Init delete dialog with choice
+    fun initDeleteNoteDialog() {
         val builder = AlertDialog.Builder(requireContext())
         val view = LayoutInflater.from(requireContext()).inflate(
                 R.layout.layout_delete_dialog,
@@ -298,18 +309,6 @@ class AddNoteFragment : Fragment() {
         mUrlDialog.show()
     }
 
-    // Сбрасывает все отметки у значков выбора цвета
-    private fun resetImageResource() {
-        with(binding.root.layoutSheetMore) {
-            imageColorBlue.setImageResource(0)
-            imageColorDefault.setImageResource(0)
-            imageColorGreen.setImageResource(0)
-            imageColorRed.setImageResource(0)
-            imageColorYellow.setImageResource(0)
-        }
-    }
-
-    // Метод выбора изображения пользователем
     @SuppressLint("QueryPermissionsNeeded")
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -354,8 +353,6 @@ class AddNoteFragment : Fragment() {
         }
     }
 
-
-    // Возвращает путь картинки через uri
     private fun getPathFromUri(contentUri: Uri): String {
         lateinit var filePath: String
 
